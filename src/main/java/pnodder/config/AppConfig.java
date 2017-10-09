@@ -7,12 +7,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import pnodder.controllers.WelcomeController;
+import pnodder.interceptors.TimeBasedAccessInterceptor;
 
 @EnableWebMvc
 @Configuration
@@ -36,6 +39,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         return new WelcomeController();
     }
 
+    // Thymeleaf beans start
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -58,6 +62,15 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine());
         return viewResolver;
+    }
+    // Thymeleaf beans end
+
+    // Register an interceptor
+    public void addInterceptors(InterceptorRegistry registry) {
+        TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
+        interceptor.setOpenTime(10);
+        interceptor.setCloseTime(5);
+        registry.addInterceptor(interceptor);
     }
 
 }
