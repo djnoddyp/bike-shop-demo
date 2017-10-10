@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.Validator;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -16,10 +17,11 @@ import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import pnodder.controllers.WelcomeController;
 import pnodder.interceptors.TimeBasedAccessInterceptor;
+import pnodder.validators.ResidentValidator;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan(basePackages = "pnodder.controllers")
+@ComponentScan("pnodder.controllers")
 public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -29,17 +31,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         this.applicationContext = applicationContext;
     }
 
-    @Bean
-    public BeanNameUrlHandlerMapping beanNameUrlHandlerMapping() {
-        return new BeanNameUrlHandlerMapping();
-    }
-
-    @Bean
-    public WelcomeController welcomeController() {
-        return new WelcomeController();
-    }
-
-    // Thymeleaf beans start
+    // Thymeleaf beans
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
@@ -63,14 +55,18 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         viewResolver.setTemplateEngine(templateEngine());
         return viewResolver;
     }
-    // Thymeleaf beans end
 
     // Register an interceptor
     public void addInterceptors(InterceptorRegistry registry) {
         TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
         interceptor.setOpenTime(10);
-        interceptor.setCloseTime(5);
+        interceptor.setCloseTime(18);
         registry.addInterceptor(interceptor);
+    }
+
+    @Bean
+    public Validator validator() {
+        return new ResidentValidator();
     }
 
 }
