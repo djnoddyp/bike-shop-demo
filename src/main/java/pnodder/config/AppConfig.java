@@ -10,18 +10,15 @@ import org.springframework.validation.Validator;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
-import pnodder.controllers.WelcomeController;
 import pnodder.interceptors.TimeBasedAccessInterceptor;
 import pnodder.validators.ResidentValidator;
 
 @EnableWebMvc
 @Configuration
-@ComponentScan("pnodder.controllers")
+@ComponentScan({"pnodder.controllers", "pnodder.repositories"})
 public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -57,6 +54,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     }
 
     // Register an interceptor
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
         TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
         interceptor.setOpenTime(10);

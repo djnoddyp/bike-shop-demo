@@ -9,17 +9,21 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import pnodder.model.Resident;
+import pnodder.repositories.ResidentRepository;
 
 @Controller
-public class WelcomeController {
+public class ResidentController {
 
     private Validator validator;
+    private ResidentRepository residentRepository;
 
-    public WelcomeController(Validator validator) {
+    public ResidentController(Validator validator, ResidentRepository residentRepository) {
         this.validator = validator;
+        this.residentRepository = residentRepository;
     }
 
     @InitBinder
@@ -39,11 +43,12 @@ public class WelcomeController {
     }
 
     @PostMapping("/saveResident")
-    public String saveResident(@Validated Resident resident, BindingResult bindingResult) {
+    public String saveResident(@Validated @RequestBody Resident resident, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            System.out.println("some errors");
+            System.out.println("form has some errors");
         } else {
-            System.out.println("Created: " + resident.getName() + " " + resident.getAddress());
+            residentRepository.saveResident(resident);
+            System.out.println("Saved: " + residentRepository.getResidentNameById(114));
         }
         return "index";
     }
