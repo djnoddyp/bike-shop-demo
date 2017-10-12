@@ -21,6 +21,7 @@ import javax.servlet.ServletContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
@@ -64,32 +65,19 @@ public class ResidentControllerTest {
 
     @Test
     public void testSaveResidentWithErrors() throws Exception {
-        Resident resident = new Resident();
-        resident.setName("Phil Collins");
-        // validation error
-        resident.setAddress("");
-
-        byte[] residentBytes = objectMapper.writeValueAsBytes(resident);
-
         this.mockMvc.perform(post("/saveResident")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(residentBytes))
-                //.andDo(print())  prints out the http req/resp
+                .param("name", "jim")
+                .param("address", ""))
+                //.andDo(print())  // prints out the http req/resp
                 .andExpect(model().attributeHasErrors("resident"));
     }
 
     @Test
     public void testSaveResidentNoErrors() throws Exception {
-        Resident resident = new Resident();
-        resident.setName("Phil Collins");
-        resident.setAddress("The Dirty Burger");
-
-        byte[] residentBytes = objectMapper.writeValueAsBytes(resident);
-
         this.mockMvc.perform(post("/saveResident")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(residentBytes))
-                //.andDo(print())  prints out the http req/resp
+                .param("name", "jim")
+                .param("address", ""))
+                //.andDo(print())  // prints out the http req/resp
                 .andExpect(model().attributeHasNoErrors("resident"));
     }
 

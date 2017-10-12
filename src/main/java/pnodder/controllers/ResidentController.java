@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import pnodder.model.Resident;
 import pnodder.repositories.ResidentRepository;
 
@@ -43,7 +44,7 @@ public class ResidentController {
     }
 
     @PostMapping("/saveResident")
-    public String saveResident(@Validated @RequestBody Resident resident, BindingResult bindingResult) {
+    public String saveResident(@Validated Resident resident, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             System.out.println("form has some errors");
         } else {
