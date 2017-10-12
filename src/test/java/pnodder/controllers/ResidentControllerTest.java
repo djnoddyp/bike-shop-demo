@@ -76,7 +76,7 @@ public class ResidentControllerTest {
     public void testSaveResidentNoErrors() throws Exception {
         this.mockMvc.perform(post("/saveResident")
                 .param("name", "jim")
-                .param("address", ""))
+                .param("address", "sunnyvale"))
                 //.andDo(print())  // prints out the http req/resp
                 .andExpect(model().attributeHasNoErrors("resident"));
     }

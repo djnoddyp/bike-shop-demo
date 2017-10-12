@@ -54,13 +54,13 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     }
 
     // Register an interceptor
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
-        interceptor.setOpenTime(10);
-        interceptor.setCloseTime(18);
-        registry.addInterceptor(interceptor);
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
+//        interceptor.setOpenTime(10);
+//        interceptor.setCloseTime(18);
+//        registry.addInterceptor(interceptor);
+//    }
 
     @Bean
     public Validator validator() {
