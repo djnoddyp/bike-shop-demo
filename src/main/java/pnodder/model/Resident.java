@@ -1,6 +1,6 @@
 package pnodder.model;
 
-public class Resident {
+public class Resident{
 
     private String name;
     private String address;
