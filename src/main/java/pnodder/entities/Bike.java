@@ -1,4 +1,4 @@
-package pnodder.model;
+package pnodder.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

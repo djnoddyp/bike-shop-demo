@@ -6,9 +6,9 @@
 </head>
 <body>
   <h2 th:text="${message}">welcome</h2>
-  <form action="#" th:action="@{/saveResident}" th:object="${resident}" method="post">
-    <input type="text" th:field="*{name}" th:value="Name"/><br>
-    <input type="text" th:field="*{address}" th:value="Address"/><br>
+  <form action="#" th:action="@{/saveOrder}" th:object="${order}" method="post">
+    <input type="text" th:field="*{bike}" th:value="bike"/><br>
+    <input type="text" th:field="*{email}" th:value="email"/><br>
     <input type="submit" /><br>
   </form>
 </body>
