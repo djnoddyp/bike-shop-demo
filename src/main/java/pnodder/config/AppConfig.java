@@ -1,6 +1,6 @@
 package pnodder.config;
 
-import org.hibernate.cfg.AvailableSettings;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -10,48 +10,41 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.Properties;
+import javax.annotation.PostConstruct;
 
 @EnableWebMvc
 @Configuration
-@EnableJpaRepositories(basePackages = "pnodder.repositories")
-@ComponentScan({"pnodder.controllers", "pnodder.repositories"})
+@ComponentScan("pnodder.*")
 @PropertySource("classpath:/app.properties")
-@EnableTransactionManagement
 public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
-    private ApplicationContext applicationContext;
+    private ApplicationContext ctx;
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+        this.ctx = ctx;
     }
 
     @Autowired
     Environment env;
 
-    // Thymeleaf beans
+    /* ####### Thymeleaf beans ####### */
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setApplicationContext(applicationContext);
+        templateResolver.setApplicationContext(ctx);
         templateResolver.setPrefix("/templates/");
         templateResolver.setSuffix(".html");
         return templateResolver;
@@ -72,54 +65,44 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         return viewResolver;
     }
 
-    // Register an interceptor
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        TimeBasedAccessInterceptor interceptor = new TimeBasedAccessInterceptor();
-//        interceptor.setOpenTime(10);
-//        interceptor.setCloseTime(18);
-//        registry.addInterceptor(interceptor);
-//    }
-
+    /* ####### Datasource beans ####### */
     @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(EmbeddedDatabaseType.HSQL)
-                .setScriptEncoding("UTF-8")
-                .ignoreFailedDrops(true)
-                // another way of initialising db
-                //.addScripts(new String[]{"classpath:/sql/test-schema.sql", "classpath:/sql/test-data.sql"})
-                .build();
+    public BasicDataSource dataSource() {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/bikeShop");
+        dataSource.setUsername("root");
+        dataSource.setPassword("password");
+        return dataSource;
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-        LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-        factory.setJpaVendorAdapter(vendorAdapter);
-        factory.setPackagesToScan("pnodder.entities");
-        factory.setDataSource(dataSource());
-        factory.setJpaProperties(getHibernateProperties());
-        return factory;
-    }
-
-    private Properties getHibernateProperties() {
-        Properties props = new Properties();
-        props.put(AvailableSettings.DIALECT, env.getProperty("hibernate.dialect"));
-        props.put(AvailableSettings.SHOW_SQL, env.getProperty("hibernate.show_sql"));
-        props.put(AvailableSettings.HBM2DDL_AUTO, env.getProperty("hibernate.hbm2ddl.auto"));
-        props.put(AvailableSettings.FORMAT_SQL, env.getProperty("hibernate.format_sql"));
-        // this only gets executed if hbm2ddl.auto = create or create-drop
-        //props.put(AvailableSettings.HBM2DDL_IMPORT_FILES, env.getProperty("hibernate.hbm2ddl.import_files"));
-        return props;
-    }
-
-    @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(emf);
+    public PlatformTransactionManager transactionManager() {
+        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource(dataSource());
         return transactionManager;
     }
 
+    @PostConstruct
+    public void dataSourceInitializer() {
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScripts(getInitScripts());
+        initializer.setDataSource(dataSource());
+        initializer.setDatabasePopulator(populator);
+        initializer.afterPropertiesSet();
+    }
+
+    private Resource[] getInitScripts() {
+        Resource[] scripts = new Resource[2];
+        scripts[0] = ctx.getResource("classpath:/sql/schema.sql");
+        scripts[1] = ctx.getResource("classpath:/sql/data.sql");
+        return scripts;
+    }
+
+    /* ####### Bootstrap and jQuery ####### */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+    }
 }

@@ -9,7 +9,7 @@
         <module name="bike-shop-demo" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="bike-shop-demo" target="1.8" />
     </bytecodeTargetLevel>
   </component>
