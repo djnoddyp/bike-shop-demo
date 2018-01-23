@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Repository
+//@Repository
 public class BikeDao implements GenericDao {
 
     private NamedParameterJdbcTemplate parameterJdbcTemplate;

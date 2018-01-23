@@ -10,14 +10,11 @@ import java.text.ParseException;
 import java.util.Locale;
 
 public class BikeFormatter implements Formatter<Bike> {
-    
-    @Autowired
-    private BikeDao bikeDao;
 
     @Override
     public Bike parse(String s, Locale locale) throws ParseException {
         final Integer id = Integer.valueOf(s);
-        return this.bikeDao.findById(id);
+        return null;
     }
 
     @Override

@@ -69,37 +69,36 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     }
 
     /* ####### Datasource beans ####### */
-    @Bean
-    public BasicDataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/bikeShop");
-        dataSource.setUsername("root");
-        dataSource.setPassword("trance");
-        return dataSource;
-    }
+//    private BasicDataSource dataSource() {
+//        BasicDataSource dataSource = new BasicDataSource();
+//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/bikeShop");
+//        dataSource.setUsername("root");
+//        dataSource.setPassword(env.getProperty("mysql.password"));
+//        return dataSource;
+//    }
 
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-        transactionManager.setDataSource(dataSource());
-        return transactionManager;
-    }
+//    @Bean
+//    public PlatformTransactionManager transactionManager() {
+//        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+//        transactionManager.setDataSource(dataSource());
+//        return transactionManager;
+//    }
 
-    @PostConstruct
-    public void dataSourceInitializer() {
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(getInitScripts());
-        initializer.setDataSource(dataSource());
-        initializer.setDatabasePopulator(populator);
-        initializer.afterPropertiesSet();
-    }
+//    @PostConstruct
+//    public void dataSourceInitializer() {
+//        DataSourceInitializer initializer = new DataSourceInitializer();
+//        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//        populator.addScripts(getInitScripts());
+//        initializer.setDataSource(dataSource());
+//        initializer.setDatabasePopulator(populator);
+//        initializer.afterPropertiesSet();
+//    }
 
     private Resource[] getInitScripts() {
-        Resource[] scripts = new Resource[2];
-        scripts[0] = ctx.getResource("classpath:/sql/schema.sql");
-        scripts[1] = ctx.getResource("classpath:/sql/data.sql");
+        Resource[] scripts = new Resource[1];
+        //scripts[0] = ctx.getResource("classpath:/sql/schema.sql");
+        scripts[0] = ctx.getResource("classpath:/sql/data.sql");
         return scripts;
     }
 
@@ -112,11 +111,6 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     @Override
     public void addFormatters(FormatterRegistry registry) {
         super.addFormatters(registry);
-        registry.addFormatter(bikeFormatter());
-    }
-    
-    @Bean
-    public BikeFormatter bikeFormatter() {
-        return new BikeFormatter();
+        registry.addFormatter(new BikeFormatter());
     }
 }
