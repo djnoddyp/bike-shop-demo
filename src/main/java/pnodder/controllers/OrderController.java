@@ -2,6 +2,7 @@ package pnodder.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,10 +25,8 @@ public class OrderController {
 
     @ModelAttribute
     public void populateModel(Model model) {
-        model.addAttribute("order", new Order());
         model.addAttribute("allBikes", bikeDao.findAll());
         model.addAttribute("basketItems", basket.getItems());
-        model.addAttribute("orderItem", new OrderItem());
     }
 
     @GetMapping("/home")
@@ -41,22 +40,27 @@ public class OrderController {
     }
 
     @GetMapping("/order")
-    public String getOrder() {
+    public String getOrder(Model model) {
         for (OrderItem o : basket.getItems()) {
             System.out.println(o.getBike());
         }
+        model.addAttribute("orderItem", new OrderItem());
         return "order";
     }
 
     @PostMapping("/addToBasket")
-    public String addToBasket(OrderItem item) {
-        System.out.println(item.getEmail());
-        if (!basket.getItems().contains(item)) {
-            basket.addToBasket(item);
+    public String addToBasket(OrderItem orderItem, BindingResult bindingResult) {
+        System.out.println(orderItem.getEmail());
+        if (!bindingResult.hasErrors()) {
+            if (!basket.getItems().contains(orderItem)) {
+                basket.addToBasket(orderItem);
+            } else {
+                // some error
+            }   
+            return "redirect:/order";
         } else {
-            // some error
+            return "order";
         }
-        return "redirect:/order";
     }
 
 //    @PostMapping("/saveOrder")

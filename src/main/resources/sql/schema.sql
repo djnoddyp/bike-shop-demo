@@ -2,7 +2,9 @@ DROP TABLE IF EXISTS bike;
 
 CREATE TABLE bike
 (
+  id INT NOT NULL AUTO_INCREMENT,
   make VARCHAR(20),
   model VARCHAR(20),
-  price INT
+  price INT,
+  PRIMARY KEY (id)
 );

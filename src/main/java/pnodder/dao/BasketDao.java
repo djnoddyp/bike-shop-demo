@@ -10,7 +10,7 @@ public class BasketDao implements GenericDao {
     }
 
     @Override
-    public Object findById(Long id) {
+    public Object findById(Integer id) {
         return null;
     }
 

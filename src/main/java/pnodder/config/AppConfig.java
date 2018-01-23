@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
+import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import pnodder.formatters.BikeFormatter;
 
 import javax.annotation.PostConstruct;
 
@@ -72,7 +75,7 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost:3306/bikeShop");
         dataSource.setUsername("root");
-        dataSource.setPassword("password");
+        dataSource.setPassword("trance");
         return dataSource;
     }
 
@@ -104,5 +107,16 @@ public class AppConfig extends WebMvcConfigurerAdapter implements ApplicationCon
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        super.addFormatters(registry);
+        registry.addFormatter(bikeFormatter());
+    }
+    
+    @Bean
+    public BikeFormatter bikeFormatter() {
+        return new BikeFormatter();
     }
 }

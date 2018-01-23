@@ -2,8 +2,17 @@ package pnodder.model;
 
 public class OrderItem {
 
+    private Long id;
     private String email;
     private Bike bike;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;

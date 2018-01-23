@@ -60,16 +60,15 @@
     <div class="container">
       <div class="row">
         <div class="col-sm">
-          <form th:action="@{/addToBasket}" th:object="${orderItem}" method="post">
+          <form action="#" th:action="@{/addToBasket}" th:object="${orderItem}" method="post">
             <div class="form-group">
               <label for="exampleFormControlInput1">email</label>
               <input type="email" th:field="*{email}" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
             </div>
             <div class="form-group">
               <label for="exampleFormControlSelect1">item</label>
-              <select class="form-control" id="exampleFormControlSelect1">
-                <option>select bike</option>
-                <option th:each="b : ${allBikes}" th:text="${b.getMake() + ' ' + b.getModel() + ' £' + b.getPrice()}">some item</option>
+              <select class="form-control" id="exampleFormControlSelect1" th:field="*{bike}">
+                <option th:each="b : ${allBikes}" th:value="${b.id}" th:text="${b.make + ' ' + b.model}">some item</option>
               </select>
             </div>
             <button type="submit" class="btn btn-primary">add to basket</button>
@@ -89,9 +88,9 @@
             </thead>
             <tbody>
             <tr th:each="item : ${basketItems}">
-              <td th:text="${item.getEmail()}">Mark</td>
-              <td th:text="${item.getBike().desciption()}">Otto</td>
-              <td th:text="${item.getBike().getPrice()}">@mdo</td>
+              <td th:text="${item.email}">Mark</td>
+              <td th:text="${item.bike.model}">Otto</td>
+              <td th:text="${item.bike.price}">@mdo</td>
             </tr>
             <tr>
               <td></td>

@@ -6,6 +6,6 @@ public interface GenericDao {
 
     List findAll();
 
-    Object findById(Long id);
+    Object findById(Integer id);
 
 }

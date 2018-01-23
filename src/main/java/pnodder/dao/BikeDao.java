@@ -48,7 +48,9 @@ public class BikeDao implements GenericDao {
     }
 
     @Override
-    public Object findById(Long id) {
-        return null;
+    public Bike findById(Integer id) {
+        String sql = "SELECT * FROM bike WHERE id = :id";
+        SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+        return this.parameterJdbcTemplate.queryForObject(sql, parameterSource, new BikeMapper());
     }
 }
